@@ -9,24 +9,22 @@ import SwiftUI
 
 struct ContentView: View {
     @ObservedObject var game: Game = Game(initialMovePosition: Position.moveRight, initialGemPosition: Position())
-    @State var snakeBodyColor: Color = Color.pink
-    @State var snakeHeadColor: Color = Color.yellow
-    @State var gemColor: Color = Color.blue
+    @State var colorConfig: (snakeHeadColor: Color, snakeBodyColor: Color, gemColor: Color) = (Color.yellow, Color.pink, Color.blue)
     var body: some View {
         GeometryReader { proxy in
             if game.ended || !game.started {
-                MenuView(game: game, proxy: proxy)
+                MenuView(proxy: proxy)
             } else {
                 VStack {
-                    GameField(contentView: self)
+                    GameField(colorConfig: $colorConfig)
                     Divider()
-                    ColorPickerView(contentView: self)
+                    ColorPickerView(colorConfig: $colorConfig)
                     Divider()
-                    OperationButtonView(contentView: self)
+                    OperationButtonView()
                     Spacer()
                 }
             }
-        }
+        }.environmentObject(game)
     }
 }
 
@@ -37,7 +35,7 @@ struct ContentView_Previews: PreviewProvider {
 }
 
 struct MenuView: View {
-    let game: Game
+    @EnvironmentObject var game: Game
     let proxy: GeometryProxy
     var body: some View {
         ZStack {
@@ -54,20 +52,18 @@ struct MenuView: View {
                     game.reset(initialMovePosition: Position.moveRight, initialGemPosition: Position())
                     game.ended = false
                 }.font(.title).buttonStyle(BorderlessButtonStyle())
-                if !game.ended && !game.started {
-                    Button("Continue") {
-                        game.started = true
-                    }.font(.title).buttonStyle(BorderlessButtonStyle())
-                }
+                Button("Continue") {
+                    game.started = true
+                }.font(.title).buttonStyle(BorderlessButtonStyle()).keyboardShortcut(" ", modifiers: []).buttonStyle(BorderlessButtonStyle()).disabled(game.ended || game.started)
                 
                 Group {
                     TextField("Time Interval", text: .init(get: { return String(timeInterval) }, set: { game.ended  = true; timeInterval = Double($0) ?? 0 })).textFieldStyle(RoundedBorderTextFieldStyle())
                     TextField("Size", text: .init(get: { return String(size) }, set: { game.ended  = true; size = Int($0) ?? 0 })).textFieldStyle(RoundedBorderTextFieldStyle())
                     
-                    Toggle("Auto", isOn: .init(get: { return auto }, set: { game.ended  = true; auto = $0; if $0 { enduring = true } }))
-                    Toggle("Enduring", isOn: .init(get: { return enduring }, set: { game.ended  = true; enduring = $0; if !$0 { auto = false } }))
-                    Toggle("Cycle", isOn: .init(get: { return cycle }, set: { game.ended  = true; cycle = $0 }))
-                    Toggle("Obliqe", isOn: .init(get: { return obliqe }, set: { game.ended  = true; obliqe = $0 }))
+                    Toggle("Auto", isOn: .init(get: { return auto }, set: { auto = $0; if $0 { enduring = true }; game.objectWillChange.send() }))
+                    Toggle("Enduring", isOn: .init(get: { return enduring }, set: { enduring = $0; if !$0 { auto = false }; game.objectWillChange.send() }))
+                    Toggle("Cycle", isOn: .init(get: { return cycle }, set: { cycle = $0; game.objectWillChange.send() }))
+                    Toggle("Obliqe", isOn: .init(get: { return obliqe }, set: { obliqe = $0; game.objectWillChange.send() }))
                     
                 }.frame(
                     width: proxy.size.width * 0.35
@@ -78,20 +74,21 @@ struct MenuView: View {
 }
 
 struct GameField: View {
-    let contentView: ContentView
+    @EnvironmentObject var game: Game
+    @Binding var colorConfig: (snakeHeadColor: Color, snakeBodyColor: Color, gemColor: Color)
     var body: some View {
         VStack {
             VStack(spacing: 0) {
                 ForEach(0..<size, id: \.self) {i in
                     HStack(spacing: 0) {
                         ForEach(0..<size, id: \.self) {j in
-                            let fieldObject: FieldObject? = contentView.game.field[Position(x: i, y: j)]
+                            let fieldObject: FieldObject? = game.field[Position(x: i, y: j)]
                             if fieldObject is SnakeHead {
-                                Rectangle().fill(contentView.snakeHeadColor)
+                                Rectangle().fill(colorConfig.snakeHeadColor)
                             } else if fieldObject is SnakeBody {
-                                Rectangle().fill(contentView.snakeBodyColor)
+                                Rectangle().fill(colorConfig.snakeBodyColor)
                             } else if fieldObject is Gem {
-                                Rectangle().fill(contentView.gemColor)
+                                Rectangle().fill(colorConfig.gemColor)
                             } else {
                                 Rectangle().fill(Color.white)
                             }
@@ -99,13 +96,14 @@ struct GameField: View {
                     }
                 }
             }.aspectRatio(1, contentMode: .fit).border(Color.secondary).padding()
-            Text("Score: \(contentView.game.score)").font(.largeTitle).bold()
+            Text("Score: \(game.score)").font(.largeTitle).bold()
         }
     }
 }
 
 struct ColorPickerView: View {
-    let contentView: ContentView
+    @EnvironmentObject var game: Game
+    @Binding var colorConfig: (snakeHeadColor: Color, snakeBodyColor: Color, gemColor: Color)
     let colors: [Color] = [.gray, .red, .green, .blue, .orange, .yellow, .pink, .purple]
     var body: some View {
         VStack {
@@ -113,7 +111,7 @@ struct ColorPickerView: View {
                 Text("Snake Head")
                 Spacer()
                 ForEach(colors.indices, id: \.self) { i in
-                    Button(action: { contentView.snakeHeadColor = colors[i] }) {
+                    Button(action: { colorConfig.snakeHeadColor = colors[i] }) {
                         Text(Image(systemName: "square.fill")).foregroundColor(colors[i])
                     }.buttonStyle(BorderlessButtonStyle())
                 }
@@ -122,7 +120,7 @@ struct ColorPickerView: View {
                 Text("Snake Body")
                 Spacer()
                 ForEach(colors.indices, id: \.self) { i in
-                    Button(action: { contentView.snakeBodyColor = colors[i] }) {
+                    Button(action: { colorConfig.snakeBodyColor = colors[i] }) {
                         Text(Image(systemName: "square.fill")).foregroundColor(colors[i])
                     }.buttonStyle(BorderlessButtonStyle())
                 }
@@ -131,7 +129,7 @@ struct ColorPickerView: View {
                 Text("Gem")
                 Spacer()
                 ForEach(colors.indices, id: \.self) { i in
-                    Button(action: { contentView.gemColor = colors[i] }) {
+                    Button(action: { colorConfig.gemColor = colors[i] }) {
                         Text(Image(systemName: "square.fill")).foregroundColor(colors[i])
                     }.buttonStyle(BorderlessButtonStyle())
                 }
@@ -141,49 +139,49 @@ struct ColorPickerView: View {
 }
 
 struct OperationButtonView: View {
-    let contentView: ContentView
+    @EnvironmentObject var game: Game
     var body: some View {
         VStack(spacing: 0) {
             HStack(spacing: 0) {
                 if obliqe {
-                    Button(action: { contentView.game.currentMovePosition = Position.moveUpLeft }) {
+                    Button(action: { game.currentMovePosition = Position.moveUpLeft }) {
                         Image(systemName: "arrow.up.left.circle").font(.largeTitle)
                     }.keyboardShortcut("q", modifiers: []).buttonStyle(BorderlessButtonStyle()).padding()
                 }
-                Button(action: { contentView.game.currentMovePosition = Position.moveUp }) {
+                Button(action: { game.currentMovePosition = Position.moveUp }) {
                     Image(systemName: "arrow.up.circle").font(.largeTitle)
                 }.keyboardShortcut("w", modifiers: []).buttonStyle(BorderlessButtonStyle()).padding()
                 if obliqe {
-                    Button(action: { contentView.game.currentMovePosition = Position.moveUpRight }) {
+                    Button(action: { game.currentMovePosition = Position.moveUpRight }) {
                         Image(systemName: "arrow.up.right.circle").font(.largeTitle)
                     }.keyboardShortcut("e", modifiers: []).buttonStyle(BorderlessButtonStyle()).padding()
                 }
             }
             
             HStack(spacing: 0) {
-                Button(action: { contentView.game.currentMovePosition = Position.moveLeft }) {
+                Button(action: { game.currentMovePosition = Position.moveLeft }) {
                     Image(systemName: "arrow.left.circle").font(.largeTitle)
                 }.keyboardShortcut("a", modifiers: []).buttonStyle(BorderlessButtonStyle()).padding()
                 
-                Button(action: { contentView.game.started.toggle() }) {
+                Button(action: { game.started.toggle() }) {
                     Image(systemName: "square.fill").font(.largeTitle)
                 }.keyboardShortcut(" ", modifiers: []).buttonStyle(BorderlessButtonStyle()).padding()
                 
-                Button(action: { contentView.game.currentMovePosition = Position.moveRight }) {
+                Button(action: { game.currentMovePosition = Position.moveRight }) {
                     Image(systemName: "arrow.right.circle").font(.largeTitle)
                 }.keyboardShortcut("d", modifiers: []).buttonStyle(BorderlessButtonStyle()).padding()
             }
             HStack(spacing: 0) {
                 if obliqe {
-                    Button(action: { contentView.game.currentMovePosition = Position.moveDownLeft }) {
+                    Button(action: { game.currentMovePosition = Position.moveDownLeft }) {
                         Image(systemName: "arrow.down.left.circle").font(.largeTitle)
                     }.keyboardShortcut("z", modifiers: []).buttonStyle(BorderlessButtonStyle()).padding()
                 }
-                Button(action: { contentView.game.currentMovePosition = Position.moveDown }) {
+                Button(action: { game.currentMovePosition = Position.moveDown }) {
                     Image(systemName: "arrow.down.circle").font(.largeTitle)
                 }.keyboardShortcut("s", modifiers: []).buttonStyle(BorderlessButtonStyle()).padding()
                 if obliqe {
-                    Button(action: { contentView.game.currentMovePosition = Position.moveDownRight }) {
+                    Button(action: { game.currentMovePosition = Position.moveDownRight }) {
                         Image(systemName: "arrow.down.right.circle").font(.largeTitle)
                     }.keyboardShortcut("c", modifiers: []).buttonStyle(BorderlessButtonStyle()).padding()
                 }

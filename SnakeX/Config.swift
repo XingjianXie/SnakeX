@@ -16,25 +16,11 @@ var obliqe = false
 
 extension Game {
     func moveTowardGem() {
-        switch true {
-        case self.snake[0].position[0] < self.gem.position[0] && self.snake[0].position[1] < self.gem.position[1] && obliqe:
-            currentMovePosition = Position.moveDownRight
-        case self.snake[0].position[0] < self.gem.position[0] && self.snake[0].position[1] > self.gem.position[1] && obliqe:
-            currentMovePosition = Position.moveDownLeft
-        case self.snake[0].position[0] > self.gem.position[0] && self.snake[0].position[1] < self.gem.position[1] && obliqe:
-            currentMovePosition = Position.moveUpRight
-        case self.snake[0].position[0] > self.gem.position[0] && self.snake[0].position[1] > self.gem.position[1] && obliqe:
-            currentMovePosition = Position.moveUpLeft
-        case self.snake[0].position[0] < self.gem.position[0]:
-            currentMovePosition = Position.moveDown
-        case self.snake[0].position[0] > self.gem.position[0]:
-            currentMovePosition = Position.moveUp
-        case self.snake[0].position[1] < self.gem.position[1]:
-            currentMovePosition = Position.moveRight
-        case self.snake[0].position[1] > self.gem.position[1]:
-            currentMovePosition = Position.moveLeft
-        default:
-            break
+        let xMove = (self.gem.position[0] - self.snake[0].position[0]).signum()
+        var yMove = (self.gem.position[1] - self.snake[0].position[1]).signum()
+        if xMove != 0 && yMove != 0 && !obliqe {
+            yMove = 0
         }
+        currentMovePosition = Position(x: xMove, y: yMove)
     }
 }
