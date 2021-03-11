@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ContentView: View {
-    @ObservedObject var game: Game = Game(initialMovePosition: Position.moveRight, initialGemPosition: Position())
+    @ObservedObject var game: Game = Game(initialMovePosition: Position.moveRight, initialGemPosition: Position(withRandomPosition: ()))
     @State var colorConfig: (snakeHeadColor: Color, snakeBodyColor: Color, gemColor: Color) = (Color.yellow, Color.pink, Color.blue)
     var body: some View {
         GeometryReader { proxy in
@@ -49,7 +49,7 @@ struct MenuView: View {
                 }
                 Text("Score: \(game.score)").font(.title)
                 Button("New Game") {
-                    game.reset(initialMovePosition: Position.moveRight, initialGemPosition: Position())
+                    game.reset(initialMovePosition: Position.moveRight, initialGemPosition: Position(withRandomPosition: ()))
                     game.ended = false
                 }.font(.title).buttonStyle(BorderlessButtonStyle())
                 Button("Continue") {
@@ -83,13 +83,14 @@ struct GameField: View {
                     HStack(spacing: 0) {
                         ForEach(0..<size, id: \.self) {j in
                             let fieldObject: FieldObject? = game.field[Position(x: i, y: j)]
-                            if fieldObject is SnakeHead {
+                            switch fieldObject {
+                            case .SnakeHead:
                                 Rectangle().fill(colorConfig.snakeHeadColor)
-                            } else if fieldObject is SnakeBody {
+                            case .SnakeBody:
                                 Rectangle().fill(colorConfig.snakeBodyColor)
-                            } else if fieldObject is Gem {
+                            case .Gem:
                                 Rectangle().fill(colorConfig.gemColor)
-                            } else {
+                            case .none:
                                 Rectangle().fill(Color.white)
                             }
                         }

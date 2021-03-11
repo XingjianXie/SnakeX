@@ -7,26 +7,23 @@
 
 import SwiftUI
 
-protocol FieldObject {
-    var position: Position { get }
-}
-
-struct SnakeHead: FieldObject {
-    let position: Position
-    init(snakeBody: SnakeBody) {
-        self.position = snakeBody.position
+enum FieldObject {
+    case SnakeHead(position: Position)
+    case SnakeBody(position: Position)
+    case Gem(position: Position)
+    var position: Position {
+        switch self {
+        case .SnakeHead(let p):
+            return p
+        case .SnakeBody(let p):
+            return p
+        case .Gem(let p):
+            return p
+        }
     }
 }
 
-struct SnakeBody: FieldObject {
-    let position: Position
-}
-
-struct Gem: FieldObject {
-    let position: Position
-}
-
-typealias Snake = [SnakeBody]
+typealias Snake = [FieldObject]
 
 enum GameError: Error {
     case emptySnake
@@ -44,7 +41,7 @@ extension Snake {
         if self.contains(where: { $0.position.at(newHeadPosition) }) && !enduring {
             return .crashBody
         }
-        let newHead: SnakeBody = SnakeBody(position: newHeadPosition)
+        let newHead: FieldObject = FieldObject.SnakeBody(position: newHeadPosition)
         self.insert(newHead, at: 0)
         if !noPop {
             _ = self.popLast()
@@ -79,7 +76,7 @@ extension Position {
     init(x: Int, y: Int) {
         self.init([x, y])
     }
-    init() {
+    init(withRandomPosition: Void) {
         self.init([Int(arc4random_uniform(UInt32(size))), Int(arc4random_uniform(UInt32(size)))])
     }
 }
@@ -97,7 +94,7 @@ struct Field {
         game.snake.forEach { snakeBody in
             self[snakeBody.position] = snakeBody
         }
-        self[game.snake[0].position] = SnakeHead(snakeBody: game.snake[0])
+        self[game.snake[0].position] = FieldObject.SnakeHead(position: game.snake[0].position)
     }
     subscript(position: Position) -> FieldObject? {
         get {

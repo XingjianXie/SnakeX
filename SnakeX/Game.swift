@@ -17,7 +17,7 @@ class Game: ObservableObject {
     var snake: Snake
     var currentMovePosition: Position
     var noPop: Bool = false
-    var gem: Gem
+    var gem: FieldObject
     var timer: Timer!
     @Published var started: Bool = true
     @Published var ended: Bool = false
@@ -29,7 +29,7 @@ class Game: ObservableObject {
         _ = snake.contains { snakeBody in
             if snakeBody.position.at(gem.position) {
                 noPop = true
-                gem = Gem(position: Position())
+                gem = FieldObject.Gem(position: Position(withRandomPosition: ()))
                 score += 1
                 return true
             }
@@ -47,9 +47,9 @@ class Game: ObservableObject {
     }
     func reset(initialMovePosition: Position, initialGemPosition: Position) {
         score = 0
-        snake = [SnakeBody(position: [0, 0])]
+        snake = [FieldObject.SnakeBody(position: [0, 0])]
         currentMovePosition = initialMovePosition
-        gem = Gem(position: Position())
+        gem = FieldObject.Gem(position: Position(withRandomPosition: ()))
         field = Field(game: self)
         field.update()
         self.timer.invalidate()
@@ -64,9 +64,9 @@ class Game: ObservableObject {
         self.started = true
     }
     init(initialMovePosition: Position, initialGemPosition: Position) {
-        snake = [SnakeBody(position: [0, 0])]
+        snake = [FieldObject.SnakeBody(position: [0, 0])]
         currentMovePosition = initialMovePosition
-        gem = Gem(position: Position())
+        gem = FieldObject.Gem(position: Position(withRandomPosition: ()))
         field = Field(game: self)
         field.update()
         self.timer = Timer.scheduledTimer(withTimeInterval: timeInterval, repeats: true) { timer in
