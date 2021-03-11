@@ -47,7 +47,7 @@ class Game: ObservableObject {
     }
     func reset(initialMovePosition: Position, initialGemPosition: Position) {
         score = 0
-        snake = [FieldObject.SnakeBody(position: [0, 0])]
+        snake = [FieldObject.SnakeBody(position: .Position(0, 0))]
         currentMovePosition = initialMovePosition
         gem = FieldObject.Gem(position: Position(withRandomPosition: ()))
         field = Field(game: self)
@@ -64,7 +64,7 @@ class Game: ObservableObject {
         self.started = true
     }
     init(initialMovePosition: Position, initialGemPosition: Position) {
-        snake = [FieldObject.SnakeBody(position: [0, 0])]
+        snake = [FieldObject.SnakeBody(position: .Position(0, 0))]
         currentMovePosition = initialMovePosition
         gem = FieldObject.Gem(position: Position(withRandomPosition: ()))
         field = Field(game: self)

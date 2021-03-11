@@ -21,6 +21,6 @@ extension Game {
         if xMove != 0 && yMove != 0 && !obliqe {
             yMove = 0
         }
-        currentMovePosition = Position(x: xMove, y: yMove)
+        currentMovePosition = .Position(xMove, yMove)
     }
 }

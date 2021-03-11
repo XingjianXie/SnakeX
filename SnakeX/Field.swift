@@ -50,34 +50,43 @@ extension Snake {
     }
 }
 
-typealias Position = [Int]
+enum Position {
+    case Position(Int, Int)
+}
+
 
 extension Position {
-    static var moveUp: Position { [-1, 0] }
-    static var moveUpLeft: Position { [-1, -1] }
-    static var moveUpRight: Position { [-1, 1] }
-    static var moveDown: Position { [1, 0] }
-    static var moveDownLeft: Position { [1, -1] }
-    static var moveDownRight: Position { [1, 1] }
-    static var moveLeft: Position { [0, -1] }
-    static var moveRight: Position { [0, 1] }
+    static var moveUp: Position { .Position(-1, 0) }
+    static var moveUpLeft: Position { .Position(-1, -1) }
+    static var moveUpRight: Position { .Position(-1, 1) }
+    static var moveDown: Position { .Position(1, 0) }
+    static var moveDownLeft: Position { .Position(1, -1) }
+    static var moveDownRight: Position { .Position(1, 1) }
+    static var moveLeft: Position { .Position(0, -1) }
+    static var moveRight: Position { .Position(0, 1) }
+    
+    subscript(x: Int) -> Int {
+        get {
+            switch self {
+            case .Position(let a, let b):
+                return x == 0 ? a : b
+            }
+        }
+    }
     
     var withinBorder: Bool { 0..<size ~= self[0] && 0..<size ~= self[1] }
     func with(offset: Position) -> Position {
         if cycle {
-            return [(self[0] + offset[0] + size) % size , (self[1] + offset[1] + size) % size]
+            return .Position((self[0] + offset[0] + size) % size , (self[1] + offset[1] + size) % size)
         } else {
-            return [self[0] + offset[0] , self[1] + offset[1]]
+            return .Position(self[0] + offset[0] , self[1] + offset[1])
         }
     }
     func at(_ position: Position) -> Bool {
         return self[0] == position[0] && self[1] == position[1]
     }
-    init(x: Int, y: Int) {
-        self.init([x, y])
-    }
     init(withRandomPosition: Void) {
-        self.init([Int(arc4random_uniform(UInt32(size))), Int(arc4random_uniform(UInt32(size)))])
+        self = .Position(Int(arc4random_uniform(UInt32(size))), Int(arc4random_uniform(UInt32(size))))
     }
 }
 
@@ -87,7 +96,7 @@ struct Field {
     mutating func update() {
         for i in 0..<size {
             for j in 0..<size {
-                self[Position(x: i, y: j)] = nil
+                self[.Position(i, j)] = nil
             }
         }
         self[game.gem.position] = game.gem
