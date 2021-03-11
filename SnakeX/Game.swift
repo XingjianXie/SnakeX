@@ -14,10 +14,10 @@ enum GameResult {
 }
 
 class Game: ObservableObject {
-    var snake: Snake
-    var currentMovePosition: Position
+    var snake: Snake!
+    var currentMovePosition: Position!
     var noPop: Bool = false
-    var gem: FieldObject
+    var gem: FieldObject!
     var timer: Timer!
     @Published var started: Bool = true
     @Published var ended: Bool = false
@@ -45,14 +45,17 @@ class Game: ObservableObject {
             break
         }
     }
-    func reset(initialMovePosition: Position, initialGemPosition: Position) {
+    func reset(initialMovePosition: Position, initialGemPosition: Position, firstTime: Bool = false) {
         score = 0
         snake = [FieldObject.SnakeBody(position: .Position(0, 0))]
         currentMovePosition = initialMovePosition
         gem = FieldObject.Gem(position: Position(withRandomPosition: ()))
         field = Field(game: self)
         field.update()
-        self.timer.invalidate()
+        if !firstTime {
+            self.timer.invalidate()
+        }
+        
         self.timer = Timer.scheduledTimer(withTimeInterval: timeInterval, repeats: true) { timer in
             if self.started {
                 if auto {
@@ -64,18 +67,6 @@ class Game: ObservableObject {
         self.started = true
     }
     init(initialMovePosition: Position, initialGemPosition: Position) {
-        snake = [FieldObject.SnakeBody(position: .Position(0, 0))]
-        currentMovePosition = initialMovePosition
-        gem = FieldObject.Gem(position: Position(withRandomPosition: ()))
-        field = Field(game: self)
-        field.update()
-        self.timer = Timer.scheduledTimer(withTimeInterval: timeInterval, repeats: true) { timer in
-            if self.started {
-                if auto {
-                    self.moveTowardGem()
-                }
-                self.update()
-            }
-        }
+        reset(initialMovePosition: initialMovePosition, initialGemPosition: initialGemPosition, firstTime: true)
     }
 }

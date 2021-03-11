@@ -1,6 +1,6 @@
 //
 //  SnakeXApp.swift
-//  Shared
+//  SnakeX
 //
 //  Created by 谢行健 on 2021/3/9.
 //

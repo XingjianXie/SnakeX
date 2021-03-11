@@ -1,15 +1,16 @@
 //
 //  ContentView.swift
-//  Shared
+//  SnakeX
 //
 //  Created by 谢行健 on 2021/3/9.
 //
 
 import SwiftUI
 
+typealias ColorConfig = (snakeHeadColor: Color, snakeBodyColor: Color, gemColor: Color)
 struct ContentView: View {
     @ObservedObject var game: Game = Game(initialMovePosition: Position.moveRight, initialGemPosition: Position(withRandomPosition: ()))
-    @State var colorConfig: (snakeHeadColor: Color, snakeBodyColor: Color, gemColor: Color) = (Color.yellow, Color.pink, Color.blue)
+    @State var colorConfig: ColorConfig = (Color.yellow, Color.pink, Color.blue)
     var body: some View {
         GeometryReader { proxy in
             if game.ended || !game.started {
@@ -75,7 +76,7 @@ struct MenuView: View {
 
 struct GameField: View {
     @EnvironmentObject var game: Game
-    @Binding var colorConfig: (snakeHeadColor: Color, snakeBodyColor: Color, gemColor: Color)
+    @Binding var colorConfig: ColorConfig
     var body: some View {
         VStack {
             VStack(spacing: 0) {
