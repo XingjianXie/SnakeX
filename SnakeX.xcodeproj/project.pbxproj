@@ -10,7 +10,6 @@
 		4D5CF03825F9C75000E4DA6A /* SnakeXApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D5CF03725F9C75000E4DA6A /* SnakeXApp.swift */; };
 		4D5CF03A25F9C75000E4DA6A /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D5CF03925F9C75000E4DA6A /* ContentView.swift */; };
 		4D5CF03C25F9C75200E4DA6A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4D5CF03B25F9C75200E4DA6A /* Assets.xcassets */; };
-		4D5CF03F25F9C75200E4DA6A /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4D5CF03E25F9C75200E4DA6A /* Preview Assets.xcassets */; };
 		4D5CF04825F9C76900E4DA6A /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D5CF04725F9C76900E4DA6A /* Config.swift */; };
 		4D5CF04B25F9C79B00E4DA6A /* Field.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D5CF04A25F9C79B00E4DA6A /* Field.swift */; };
 		4D5CF04E25F9C7A000E4DA6A /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D5CF04D25F9C7A000E4DA6A /* Game.swift */; };
@@ -21,7 +20,6 @@
 		4D5CF03725F9C75000E4DA6A /* SnakeXApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnakeXApp.swift; sourceTree = "<group>"; };
 		4D5CF03925F9C75000E4DA6A /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		4D5CF03B25F9C75200E4DA6A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		4D5CF03E25F9C75200E4DA6A /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		4D5CF04025F9C75200E4DA6A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4D5CF04725F9C76900E4DA6A /* Config.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		4D5CF04A25F9C79B00E4DA6A /* Field.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Field.swift; sourceTree = "<group>"; };
@@ -67,17 +65,8 @@
 				4D5CF03925F9C75000E4DA6A /* ContentView.swift */,
 				4D5CF03B25F9C75200E4DA6A /* Assets.xcassets */,
 				4D5CF04025F9C75200E4DA6A /* Info.plist */,
-				4D5CF03D25F9C75200E4DA6A /* Preview Content */,
 			);
 			path = SnakeX;
-			sourceTree = "<group>";
-		};
-		4D5CF03D25F9C75200E4DA6A /* Preview Content */ = {
-			isa = PBXGroup;
-			children = (
-				4D5CF03E25F9C75200E4DA6A /* Preview Assets.xcassets */,
-			);
-			path = "Preview Content";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -137,7 +126,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4D5CF03F25F9C75200E4DA6A /* Preview Assets.xcassets in Resources */,
 				4D5CF03C25F9C75200E4DA6A /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -283,7 +271,6 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = SnakeX/SnakeX.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_ASSET_PATHS = "\"SnakeX/Preview Content\"";
 				DEVELOPMENT_TEAM = 655R66886B;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = SnakeX/Info.plist;
@@ -308,7 +295,6 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = SnakeX/SnakeX.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_ASSET_PATHS = "\"SnakeX/Preview Content\"";
 				DEVELOPMENT_TEAM = 46E53N7TL4;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = SnakeX/Info.plist;

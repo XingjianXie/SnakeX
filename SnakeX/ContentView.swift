@@ -8,6 +8,7 @@
 import SwiftUI
 
 typealias ColorConfig = (snakeHeadColor: Color, snakeBodyColor: Color, gemColor: Color)
+
 struct ContentView: View {
     @ObservedObject var game: Game = Game(initialMovePosition: Position.moveRight, initialGemPosition: Position(withRandomPosition: ()))
     @State var colorConfig: ColorConfig = (Color.yellow, Color.pink, Color.blue)
@@ -21,17 +22,11 @@ struct ContentView: View {
                     Divider()
                     ColorPickerView(colorConfig: $colorConfig)
                     Divider()
-                    OperationButtonView()
+                    OperationButtonsView()
                     Spacer()
                 }
             }
         }.environmentObject(game)
-    }
-}
-
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
     }
 }
 
@@ -140,52 +135,37 @@ struct ColorPickerView: View {
     }
 }
 
-struct OperationButtonView: View {
+struct OperationButtonsView: View {
     @EnvironmentObject var game: Game
+    fileprivate func OperationButton(_ action: @escaping () -> (), _ image: String, _ key: KeyEquivalent) -> some View {
+        return Button(action: action) {
+            Image(systemName: image).font(.largeTitle)
+        }.keyboardShortcut(key, modifiers: []).buttonStyle(BorderlessButtonStyle()).padding()
+    }
+    
     var body: some View {
         VStack(spacing: 0) {
             HStack(spacing: 0) {
                 if obliqe {
-                    Button(action: { game.currentMovePosition = Position.moveUpLeft }) {
-                        Image(systemName: "arrow.up.left.circle").font(.largeTitle)
-                    }.keyboardShortcut("q", modifiers: []).buttonStyle(BorderlessButtonStyle()).padding()
+                    OperationButton({ game.currentMovePosition = Position.moveUpLeft }, "arrow.up.left.circle", "q")
                 }
-                Button(action: { game.currentMovePosition = Position.moveUp }) {
-                    Image(systemName: "arrow.up.circle").font(.largeTitle)
-                }.keyboardShortcut("w", modifiers: []).buttonStyle(BorderlessButtonStyle()).padding()
+                OperationButton({ game.currentMovePosition = Position.moveUp }, "arrow.up.circle", "w")
                 if obliqe {
-                    Button(action: { game.currentMovePosition = Position.moveUpRight }) {
-                        Image(systemName: "arrow.up.right.circle").font(.largeTitle)
-                    }.keyboardShortcut("e", modifiers: []).buttonStyle(BorderlessButtonStyle()).padding()
+                    OperationButton({ game.currentMovePosition = Position.moveUpRight }, "arrow.up.right.circle", "e")
                 }
             }
-            
             HStack(spacing: 0) {
-                Button(action: { game.currentMovePosition = Position.moveLeft }) {
-                    Image(systemName: "arrow.left.circle").font(.largeTitle)
-                }.keyboardShortcut("a", modifiers: []).buttonStyle(BorderlessButtonStyle()).padding()
-                
-                Button(action: { game.started.toggle() }) {
-                    Image(systemName: "square.fill").font(.largeTitle)
-                }.keyboardShortcut(" ", modifiers: []).buttonStyle(BorderlessButtonStyle()).padding()
-                
-                Button(action: { game.currentMovePosition = Position.moveRight }) {
-                    Image(systemName: "arrow.right.circle").font(.largeTitle)
-                }.keyboardShortcut("d", modifiers: []).buttonStyle(BorderlessButtonStyle()).padding()
+                OperationButton({ game.currentMovePosition = Position.moveLeft }, "arrow.left.circle", "a")
+                OperationButton({ game.started.toggle() }, "square.fill", " ")
+                OperationButton({ game.currentMovePosition = Position.moveRight }, "arrow.right.circle", "d")
             }
             HStack(spacing: 0) {
                 if obliqe {
-                    Button(action: { game.currentMovePosition = Position.moveDownLeft }) {
-                        Image(systemName: "arrow.down.left.circle").font(.largeTitle)
-                    }.keyboardShortcut("z", modifiers: []).buttonStyle(BorderlessButtonStyle()).padding()
+                    OperationButton({ game.currentMovePosition = Position.moveDownLeft }, "arrow.down.left.circle", "z")
                 }
-                Button(action: { game.currentMovePosition = Position.moveDown }) {
-                    Image(systemName: "arrow.down.circle").font(.largeTitle)
-                }.keyboardShortcut("s", modifiers: []).buttonStyle(BorderlessButtonStyle()).padding()
+                OperationButton({ game.currentMovePosition = Position.moveDown }, "arrow.down.circle", "s")
                 if obliqe {
-                    Button(action: { game.currentMovePosition = Position.moveDownRight }) {
-                        Image(systemName: "arrow.down.right.circle").font(.largeTitle)
-                    }.keyboardShortcut("c", modifiers: []).buttonStyle(BorderlessButtonStyle()).padding()
+                    OperationButton({ game.currentMovePosition = Position.moveDownRight }, "arrow.down.right.circle", "c")
                 }
             }
         }.aspectRatio(1, contentMode: .fill)
