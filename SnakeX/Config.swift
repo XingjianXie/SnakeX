@@ -11,7 +11,7 @@ var timeInterval = 0.15
 var size = 20
 var auto = false
 var enduring = false
-var cycle = true
+var loop = true
 var obliqe = false
 
 extension Game {

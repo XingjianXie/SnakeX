@@ -58,7 +58,7 @@ struct MenuView: View {
                     
                     Toggle("Auto", isOn: .init(get: { return auto }, set: { auto = $0; if $0 { enduring = true }; game.objectWillChange.send() }))
                     Toggle("Enduring", isOn: .init(get: { return enduring }, set: { enduring = $0; if !$0 { auto = false }; game.objectWillChange.send() }))
-                    Toggle("Cycle", isOn: .init(get: { return cycle }, set: { cycle = $0; game.objectWillChange.send() }))
+                    Toggle("Loop", isOn: .init(get: { return loop }, set: { loop = $0; game.objectWillChange.send() }))
                     Toggle("Obliqe", isOn: .init(get: { return obliqe }, set: { obliqe = $0; game.objectWillChange.send() }))
                     
                 }.frame(
@@ -78,7 +78,7 @@ struct GameField: View {
                 ForEach(0..<size, id: \.self) {i in
                     HStack(spacing: 0) {
                         ForEach(0..<size, id: \.self) {j in
-                            let fieldObject: FieldObject? = game.field[.Position(i, j)]
+                            let fieldObject: FieldType? = game.field[.Position(i, j)]
                             switch fieldObject {
                             case .SnakeHead:
                                 Rectangle().fill(colorConfig.snakeHeadColor)
