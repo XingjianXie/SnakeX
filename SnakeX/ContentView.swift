@@ -78,8 +78,8 @@ struct GameField: View {
                 ForEach(0..<size, id: \.self) {i in
                     HStack(spacing: 0) {
                         ForEach(0..<size, id: \.self) {j in
-                            let fieldObject: FieldType? = game.field[.Position(i, j)]
-                            switch fieldObject {
+                            let type = game.field[.Position(i, j)]
+                            switch type {
                             case .SnakeHead:
                                 Rectangle().fill(colorConfig.snakeHeadColor)
                             case .SnakeBody:

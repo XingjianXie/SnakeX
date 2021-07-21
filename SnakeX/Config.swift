@@ -16,8 +16,8 @@ var obliqe = false
 
 extension Game {
     func moveTowardGem() {
-        let xMove = (self.gem.position[0] - self.snake[0].position[0]).signum()
-        var yMove = (self.gem.position[1] - self.snake[0].position[1]).signum()
+        let xMove = (self.gem[0] - self.snake[0][0]).signum()
+        var yMove = (self.gem[1] - self.snake[0][1]).signum()
         if xMove != 0 && yMove != 0 && !obliqe {
             yMove = 0
         }

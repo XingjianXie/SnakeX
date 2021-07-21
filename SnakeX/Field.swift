@@ -7,39 +7,28 @@
 
 import SwiftUI
 
-enum FieldType {
-    case SnakeHead(position: Position)
-    case SnakeBody(position: Position)
-    case Gem(position: Position)
-    var position: Position {
-        switch self {
-        case .SnakeHead(let p):
-            return p
-        case .SnakeBody(let p):
-            return p
-        case .Gem(let p):
-            return p
-        }
-    }
-}
-
 enum GameError: Error {
     case emptySnake
 }
 
-extension Array where Element == FieldType {
+enum GameResult {
+    case crashWall
+    case crashBody
+    case continueGame
+}
+
+extension Array where Element == Position {
     mutating func moveToward(position: Position, noPop: Bool) throws -> GameResult {
         if self.count == 0 {
             throw GameError.emptySnake
         }
-        let newHeadPosition: Position = self[0].position.with(offset: position)
-        if !newHeadPosition.withinBorder {
+        let newHead: Position = self[0].with(offset: position)
+        if !newHead.withinBorder {
             return .crashWall
         }
-        if self.contains(where: { $0.position.at(newHeadPosition) }) && !enduring {
+        if self.contains(where: { $0.at(newHead) }) && !enduring {
             return .crashBody
         }
-        let newHead: FieldType = FieldType.SnakeBody(position: newHeadPosition)
         self.insert(newHead, at: 0)
         if !noPop {
             _ = self.popLast()
@@ -90,20 +79,25 @@ extension Position {
 
 struct Field {
     private let game: Game
-    private var array = Array<Array<FieldType?>>()
+    enum BlockType {
+        case SnakeHead
+        case SnakeBody
+        case Gem
+    }
+    private var array = Array<Array<BlockType?>>()
     mutating func update() {
         for i in 0..<size {
             for j in 0..<size {
                 self[.Position(i, j)] = nil
             }
         }
-        self[game.gem.position] = game.gem
+        self[game.gem] = .Gem
         game.snake.forEach { snakeBody in
-            self[snakeBody.position] = snakeBody
+            self[snakeBody] = .SnakeBody
         }
-        self[game.snake[0].position] = FieldType.SnakeHead(position: game.snake[0].position)
+        self[game.snake[0]] = .SnakeHead
     }
-    subscript(position: Position) -> FieldType? {
+    subscript(position: Position) -> BlockType? {
         get {
             return array[position[0]][position[1]]
         }
@@ -114,7 +108,7 @@ struct Field {
     init(game: Game) {
         self.game = game
         for i in 0..<size {
-            array.append(Array<FieldType?>())
+            array.append(Array<BlockType?>())
             for _ in 0..<size {
                 array[i].append(nil)
             }
